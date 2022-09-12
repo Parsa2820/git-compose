@@ -1,0 +1,12 @@
+services:
+  sample-service-1:
+    url: https://github.com/Parsa2820/test-git-compose.git
+    branches:
+      existing:
+        - master
+        - develop
+      new:
+        - name: feature/1
+          from: develop
+        - name: feature/2
+          from: develop
