@@ -7,3 +7,8 @@ services:
       new:
         - name: feature/3
           from: master
+    args:
+      - name: sample-arg
+        value: sample-value
+      - name: sample-arg-2
+        value: sample-value

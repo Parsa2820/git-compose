@@ -63,7 +63,8 @@ class CommandProcessor:
                 os.chdir(f".git-compose/repos/{service.name}")
                 git_repo.checkout(branch.name, create=branch.base is not None)
                 git_repo.pull(branch.name)
-                self.task_handler.run(task_file, [branch.name])
+                args = [branch.name] + [x.value for x in branch.args]
+                self.task_handler.run(task_file, args)
                 os.remove(task_file)
                 git_repo.add(".")
                 git_repo.commit(f"git-compose apply {task_file}")
