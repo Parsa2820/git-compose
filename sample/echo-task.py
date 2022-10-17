@@ -1,9 +1,7 @@
 #!/bin/python
 import sys
 
-print("Hello git compose")
-print(sys.argv)
 
-with open("helloo.txt", "w") as f:
-    f.write("Hello git compose")
-    f.write(sys.argv)
+with open("test2.txt", "w") as f:
+    f.write("test git compose\n")
+    f.write(" ".join(sys.argv))

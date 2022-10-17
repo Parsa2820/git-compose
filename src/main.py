@@ -19,6 +19,13 @@ def rm():
 
 
 @app.command()
+def clone(
+    compose_file: str = "git-compose.yml"
+):
+    processor.clone()
+
+
+@app.command()
 def apply(
     task_file: str,
     compose_file: str = "git-compose.yml",

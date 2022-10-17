@@ -2,13 +2,14 @@ services:
   sample-service-1:
     url: git@github.com:Parsa2820/test-git-compose.git
     branches:
-      existing:
-        - master
-      new:
-        - name: feature/3
-          from: master
-    args:
-      - name: sample-arg
-        value: sample-value
-      - name: sample-arg-2
-        value: sample-value
+      - name: master
+        args:
+          - name: arg1
+            value: value1
+      - name: feature/5
+        from: master
+        args:
+          - name: arg1
+            value: value1
+          - name: arg2
+            value: value2

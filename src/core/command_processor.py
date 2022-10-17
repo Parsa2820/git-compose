@@ -42,11 +42,9 @@ class CommandProcessor:
         if os.path.exists(".gitmodules"):
             os.remove(".gitmodules")
 
-    def apply(
-            self,
-            task_file: str,
-            compose_file: str = "git-compose.yml",
-            commit_message: str = "git-compose apply"
+    def clone(
+        self,
+        compose_file: str = "git-compose.yml",
     ):
         with open(compose_file, "r") as f:
             compose = yaml.safe_load(f)
@@ -56,20 +54,32 @@ class CommandProcessor:
                 self.logger.info(f"Adding submodule {service.name}")
                 git_submodule.add(service.url, f".git-compose/repos/{service.name}")
         git_repo.commit("Add submodules")
+
+
+    def apply(
+            self,
+            task_file: str,
+            compose_file: str = "git-compose.yml",
+            commit_message: str = "git-compose apply"
+    ):
+        with open(compose_file, "r") as f:
+            compose = yaml.safe_load(f)
+        services = [Service.from_dict(k, v) for k, v in compose["services"].items()]
+        self.clone(compose_file)
         for service in services:
             for branch in service.branches:
                 original_work_dir = os.getcwd()
                 shutil.copy(task_file, f".git-compose/repos/{service.name}")
                 os.chdir(f".git-compose/repos/{service.name}")
-                git_repo.checkout(branch.name, create=branch.base is not None)
-                git_repo.pull(branch.name)
-                args = [branch.name] + [x.value for x in branch.args]
+                new_branch = branch.base is not None
+                git_repo.checkout(branch.name, create=new_branch)
+                if not new_branch:
+                    git_repo.pull(branch.name)
+                args = [x["value"] for x in branch.args]
                 self.task_handler.run(task_file, args)
                 os.remove(task_file)
                 git_repo.add(".")
                 git_repo.commit(f"git-compose apply {task_file}")
                 git_repo.push(branch.name)
                 os.chdir(original_work_dir)
-        git_repo.commit(commit_message)
-        git_repo.push()
         self.logger.info("Applied git-compose")
