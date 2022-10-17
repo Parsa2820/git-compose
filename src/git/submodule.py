@@ -6,7 +6,7 @@ def exists(url: str, path: str):
         return False
     with open(".gitmodules", "r") as f:
         lines = f.readlines()
-        for i in range(len(lines)):
+        for i in range(len(lines)-1):
             if path in lines[i] and url in lines[i + 1]:
                 return True
             if url in lines[i] and path in lines[i + 1]:

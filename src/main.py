@@ -29,9 +29,10 @@ def clone(
 def apply(
     task_file: str,
     compose_file: str = "git-compose.yml",
-    commit_message: str = "git-compose apply"
+    commit_message: str = "git-compose apply",
+    proceed_confirmation: bool = True
 ):
-    processor.apply(task_file, compose_file, commit_message)
+    processor.apply(task_file, compose_file, commit_message, proceed_confirmation)
 
 
 def main():

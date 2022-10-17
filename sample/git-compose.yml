@@ -6,7 +6,17 @@ services:
         args:
           - name: arg1
             value: value1
-      - name: feature/5
+      - name: feature/6
+        from: master
+        args:
+          - name: arg1
+            value: value1
+          - name: arg2
+            value: value2
+  sample-service-2:
+    url: git@github.com:Parsa2820/test-git-compose.git
+    branches:
+      - name: feature/7
         from: master
         args:
           - name: arg1

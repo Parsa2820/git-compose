@@ -15,7 +15,8 @@ class CommandProcessor:
 
     def init(self):
         if os.path.exists(".git-compose") or os.path.exists(".git"):
-            raise Exception("git-compose already initialized. Run git-compose rm first.")
+            raise Exception(
+                "git-compose already initialized. Run git-compose rm first.")
         git_repo.init()
         self.logger.debug("Initialized git repo")
         os.mkdir(".git-compose")
@@ -48,23 +49,26 @@ class CommandProcessor:
     ):
         with open(compose_file, "r") as f:
             compose = yaml.safe_load(f)
-        services = [Service.from_dict(k, v) for k, v in compose["services"].items()]
+        services = [Service.from_dict(k, v)
+                    for k, v in compose["services"].items()]
         for service in services:
             if not git_submodule.exists(service.url, service.name):
                 self.logger.info(f"Adding submodule {service.name}")
-                git_submodule.add(service.url, f".git-compose/repos/{service.name}")
+                git_submodule.add(
+                    service.url, f".git-compose/repos/{service.name}")
         git_repo.commit("Add submodules")
 
-
     def apply(
-            self,
-            task_file: str,
-            compose_file: str = "git-compose.yml",
-            commit_message: str = "git-compose apply"
+        self,
+        task_file: str,
+        compose_file: str = "git-compose.yml",
+        commit_message: str = "git-compose apply",
+        proceed_confirmation: bool = True
     ):
         with open(compose_file, "r") as f:
             compose = yaml.safe_load(f)
-        services = [Service.from_dict(k, v) for k, v in compose["services"].items()]
+        services = [Service.from_dict(k, v)
+                    for k, v in compose["services"].items()]
         self.clone(compose_file)
         for service in services:
             for branch in service.branches:
@@ -82,4 +86,8 @@ class CommandProcessor:
                 git_repo.commit(f"git-compose apply {task_file}")
                 git_repo.push(branch.name)
                 os.chdir(original_work_dir)
+                while proceed_confirmation:
+                    response = input("Continue?[y/N] ")
+                    if response.lower() in ["y", "yes"]:
+                        break                      
         self.logger.info("Applied git-compose")
